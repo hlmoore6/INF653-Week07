@@ -1,66 +1,46 @@
 <?php
-    require_once("./model/todoitems.php");
+    require_once("./model/database.php");
+    require_once("./model/item_db.php");
+    require_once("./model/category_db.php");
 
     $action = filter_input(INPUT_POST, "action", FILTER_UNSAFE_RAW);
+    if ($action == null) {
+        $action = filter_input(INPUT_GET, "action", FILTER_UNSAFE_RAW);
+    }
 
     switch ($action) {
         case "insert_item":
             $title = filter_input(INPUT_POST, "title", FILTER_UNSAFE_RAW);
             $description = filter_input(INPUT_POST, "description", FILTER_UNSAFE_RAW);
-            addTodoItem($title, $description);
+            $category_id = filter_input(INPUT_POST, "category_id", FILTER_UNSAFE_RAW);
+            add_item($category_id, $title, $description);
+            header("Location: .");
             break;
         case "remove_item":
             $itemNum = filter_input(INPUT_POST, "item_num", FILTER_VALIDATE_INT);
-            removeItem($itemNum);
+            delete_item($itemNum);
+            header("Location: .");
             break;
+        case "add_item":
+            include("./view/add_item_form.php");
+            break;
+        case "edit_categories":
+            include("./view/category_list.php");
+            break;
+        case "add_category":
+            $category_name = filter_input(INPUT_POST, "category_name", FILTER_UNSAFE_RAW);
+            add_category($category_name);
+            header("Location: .");
+            break;
+        case "remove_category":
+            $category_id = filter_input(INPUT_POST, "category_id", FILTER_UNSAFE_RAW);
+            delete_category($category_id);
+            header("Location: .");
+            break;
+        case "item_list":
         default:
+            include("./view/item_list.php");
             break;
     }
 
-    $action = "";
-
-    $todoItems = getTodoItems();
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Todo List Assignment</title>
-        <link rel="stylesheet" href="view/main.css">
-    </head>
-    <body>
-        <div id="container">
-            <div class="container-content">
-                <div class="container-header">
-                    <h1>ToDo List</h1>
-                </div>
-                <?php if ($todoItems == null) : ?>
-                    <h2>No items</h2>
-                <?php else: ?>
-                    <ul class="todo-list-items">
-                    <?php foreach($todoItems as $item) :?>
-                        <li class="todo-item">
-                            <h2 class="todo-item-title"><?php echo $item["Title"] ?></h2>
-                            <p class="todo-item-description"><?php echo $item["Description"] ?></p>
-                            <form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="POST">
-                                <button type="submit" class="todo-item-erase">X</button>
-                                <input type="hidden" name="item_num" value="<?=$item["ItemNum"]?>"/>
-                                <input type="hidden" name="action" value="remove_item"/>
-                            </form>
-                        </li>
-                    <?php endforeach ?>
-                    </ul>
-                <?php endif ?>
-            </div>
-            <form class="add-item-container" action="<?php echo $_SERVER["PHP_SELF"] ?>" method="POST">
-                <h2>Add Item</h2>
-                <input name="title" class="item-input" placeholder="Title"></input>            
-                <input name="description" class="item-input" placeholder="Description"></input>            
-                <button type="submit" class="form-submit">Add Item</button>
-                <input name="action" type="hidden" value="insert_item"/>
-            </form>
-        </div>
-    </body>
-</html>

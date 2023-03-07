@@ -15,14 +15,12 @@
     border: 2px solid black;
 }
 
-.container-header {
+header {
     border-bottom: 2px solid black;
     background-color: lightblue;
 }
 
-.todo-list-items {
-    list-style-type: none;
-
+.item-list-container {
     width: 100%;
     padding: 0;
 
@@ -31,9 +29,12 @@
     max-height: 40em;
 }
 
+.item-list {
+    list-style-type: none;
+}
+
 .todo-item {
     position: relative;
-
     border-bottom: 2px solid black;
 }
 
@@ -91,4 +92,14 @@
     font-size: 18px;
 }
 
+.links {
+    margin-top: 2em;
 
+    font-size: 24px;
+}
+
+.category-select {
+    margin-block: 1em;
+
+    font-size: 24px;
+}
